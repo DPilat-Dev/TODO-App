@@ -1,0 +1,22 @@
+name: ToDo Api CI Pipline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches: -main
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup .NET Framework
+        uses: microsoft/setup-msbuild@v1.0.2
+
+      - name: Build Todo Api Solution
+        uses: msbuild TODO-App.sln /p:Configuration=Release
