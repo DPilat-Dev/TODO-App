@@ -13,9 +13,20 @@ namespace ToDoApp.Infrastructure.Repositories
             _context = context;
         }
 
-        public IEnumerable<ToDo> GetToDosByUser(string userId)
+        public ToDo GetById(int Id)
         {
-            return _context.ToDos.Where(t => t.UserId == userId).ToList();
+            var todo = _context.ToDos.Find(Id);
+            if (todo == null)
+            {
+                throw new Exception("ToDo not found.");
+            }
+
+            return todo;
+        }
+
+        public IEnumerable<ToDo> Todos()
+        {
+            return _context.ToDos.ToList();
         }
 
         public void Add(ToDo toDo)

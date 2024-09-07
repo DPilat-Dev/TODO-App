@@ -1,6 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
-using ToDoApp.Api.Models;
 using ToDoApp.Application.Dtos;
 using ToDoApp.Application.Interfaces;
 
@@ -18,18 +16,29 @@ namespace ToDoApp.Api.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetUserToDos()
+        public IActionResult GetToDos()
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var toDos = _toDoService.GetUserToDos(userId);
+            var toDos = _toDoService.Todos();
+            if (toDos == null || !toDos.Any())
+            {
+                return NoContent();  // Return 204 No Content
+            }
+
             return Ok(toDos);
+        }
+
+        [HttpGet("{id}")]
+        public IActionResult GetToDoById(int id)
+        {
+            var toDo = _toDoService.GetById(id);
+            return Ok(toDo);
         }
 
         [HttpPost]
         public IActionResult AddToDo(ToDoDto toDo)
         {
             _toDoService.AddToDo(toDo);
-            return Ok();
+            return Ok(toDo);
         }
 
         [HttpPut("{id}")]

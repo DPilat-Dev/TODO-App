@@ -1,6 +1,7 @@
 ﻿using ToDoApp.Application.Dtos;
 using ToDoApp.Application.Interfaces;
 using ToDoApp.Core.Interfaces;
+using ToDoApp.Core.Models;
 
 namespace ToDoApp.Application.Services
 {
@@ -12,24 +13,60 @@ namespace ToDoApp.Application.Services
             _toDoRepository = toDoRepository;
         }
 
-        public IEnumerable<ToDoDto> GetUserToDos(string userId)
+        public IEnumerable<ToDoDto> Todos()
         {
-            throw new NotImplementedException();
+            var toDos = _toDoRepository.Todos();
+
+            return toDos.Select(t => new ToDoDto 
+            { 
+                Id = t.Id, 
+                Task = t.Task, 
+                IsCompleted = t.IsCompleted 
+            }).ToList();
+        }
+
+        public ToDoDto GetById(int id)
+        {
+            var todo = _toDoRepository.GetById(id);
+
+            var toDoDto = new ToDoDto
+            {
+                Id = todo.Id,
+                Task = todo.Task,
+                IsCompleted = todo.IsCompleted,
+            };
+
+            return toDoDto;
         }
 
         public void AddToDo(ToDoDto todo)
         {
-            throw new NotImplementedException();
+            var toDo = new ToDo
+            {
+                Task = todo.Task,
+                IsCompleted = todo.IsCompleted,
+            };
+
+            _toDoRepository.Add(toDo);
         }
 
         public void UpdateToDo(ToDoDto toDo)
         {
-            throw new NotImplementedException();
+            var existingTodo = _toDoRepository.GetById(toDo.Id);
+            if (existingTodo == null) 
+            {
+                throw new Exception("ToDo not found.");
+            }
+
+            existingTodo.Task = toDo.Task;
+            existingTodo.IsCompleted = toDo.IsCompleted;
+
+            _toDoRepository.Update(existingTodo);
         }
 
         public void DeleteToDo(int id)
         {
-            throw new NotImplementedException();
+            _toDoRepository.Delete(id);
         }
     }
 }
